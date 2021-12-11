@@ -17,4 +17,5 @@ accident_pivot=accident4graph.pivot(index='종류',columns='차종',values=['사
 accident_pivot.plot.bar(rot=0)
 print("===================================")
 print(accident)
+
 plt.show()
