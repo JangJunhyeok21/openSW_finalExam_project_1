@@ -14,9 +14,9 @@ bikeresist=pd.read_csv("data//이륜차신고현황_연도별_20211210003715.csv
 carresisttemp=pd.read_csv("data//자동차등록대수현황_연도별_20211205232951.csv", encoding = 'cp949')
 
 #승용차 가해피해 필터링
-accidentcar=accident[(accident.가해당사자종=='승용차')].drop('가해당사자종',axis=1)
+accidentcar=accident[(accident.가해당사자종=='승용차')].drop('피해당사자종',axis=1)
 inflictaccidentcar=pd.DataFrame({'차종':['승용차'],'종류':['가해'],'사고건수':[accidentcar['사고건수'].sum()],'사망자수':[accidentcar['사망자수'].sum()],'중상자수':[accidentcar['중상자수'].sum()],'경상자수':[accidentcar['경상자수'].sum()]})
-accidentcar=accident[(accident.피해당사자종=='승용차')].drop('피해당사자종',axis=1)
+accidentcar=accident[(accident.피해당사자종=='승용차')].drop('가해당사자종',axis=1)
 damageaccidentcar=pd.DataFrame({'차종':['승용차'],'종류':['피해'],'사고건수':[accidentcar['사고건수'].sum()],'사망자수':[accidentcar['사망자수'].sum()],'중상자수':[accidentcar['중상자수'].sum()],'경상자수':[accidentcar['경상자수'].sum()]})
 caraccident=pd.concat([inflictaccidentcar,damageaccidentcar], ignore_index=True)
 #피해가해 총합 데이터 추가
@@ -24,9 +24,9 @@ totalcar = pd.DataFrame({'차종':['승용차'],'종류':['총합'],'사고건�
 caraccident = caraccident.append(totalcar, ignore_index = True)
 
 #이륜차 가해피해 필터링
-accidentbike=accident[(accident.가해당사자종=='이륜차')].drop('가해당사자종',axis=1)
+accidentbike=accident[(accident.가해당사자종=='이륜차')].drop('피해당사자종',axis=1)
 inflictaccidentbike=pd.DataFrame({'차종':['이륜차'],'종류':['가해'],'사고건수':[accidentbike['사고건수'].sum()],'사망자수':[accidentbike['사망자수'].sum()],'중상자수':[accidentbike['중상자수'].sum()],'경상자수':[accidentbike['경상자수'].sum()]})
-accidentbike=accident[(accident.피해당사자종=='이륜차')].drop('피해당사자종',axis=1)
+accidentbike=accident[(accident.피해당사자종=='이륜차')].drop('가해당사자종',axis=1)
 damageaccidentbike=pd.DataFrame({'차종':['이륜차'],'종류':['피해'],'사고건수':[accidentbike['사고건수'].sum()],'사망자수':[accidentbike['사망자수'].sum()],'중상자수':[accidentbike['중상자수'].sum()],'경상자수':[accidentbike['경상자수'].sum()]})
 bikeaccident=pd.concat([inflictaccidentbike,damageaccidentbike], ignore_index=True)
 #피해가해 총합 데이터 추가
@@ -56,3 +56,10 @@ accidentAndResist=accidentAndResist.drop(['시점','경상자수'],axis=1)
 accidentAndResist['사고율(%)']=accidentAndResist['사고건수']/accidentAndResist['등록대수']*100
 accidentAndResist['사망률(%)']=accidentAndResist['사망자수']/accidentAndResist['사고건수']*100
 accidentAndResist['중상률(%)']=accidentAndResist['중상자수']/accidentAndResist['사고건수']*100
+
+#'이륜차는 승용차보다 안전하거나 같다'는 명제가 성립하기 위해서
+accidentAndResist_list=accidentAndResist.values.tolist()
+bikeresistNum=accidentAndResist_list[5][5] #이륜차 등록대수
+bikeaccidentNum=accidentAndResist_list[5][2] #이륜차 사고건수
+caraccidentrate=accidentAndResist_list[2][6] #승용차 사고율
+leastnonresistbike=(bikeaccidentNum/(caraccidentrate/100))-bikeresistNum #(바이크 사고건수 / (승용차 사고율(%) * 100))-바이크 등록대수=무등록 이륜차
